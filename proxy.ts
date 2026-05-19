@@ -6,12 +6,14 @@ const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
 ]);
 
-// ใน Next.js 16 proxy.ts ต้อง Export ฟังก์ชันชื่อ 'proxy' เท่านั้น
-export const proxy = clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    await auth.protect();
-  }
-});
+// ใช้รูปแบบ export default function proxy เพื่อความชัวร์ที่สุดใน Next 16
+export default function proxy(req: any, event: any) {
+  return clerkMiddleware(async (auth, req) => {
+    if (isProtectedRoute(req)) {
+      await auth.protect();
+    }
+  })(req, event);
+}
 
 export const config = {
   matcher: [
